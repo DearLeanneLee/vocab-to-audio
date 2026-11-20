@@ -1,4 +1,6 @@
-"""Speech engines: Kokoro (English) and MeloTTS (Chinese), both via sherpa-onnx."""
+"""语音引擎：英文用 Kokoro，中文用 MeloTTS，都通过 sherpa-onnx 运行。
+Speech engines: Kokoro (English) and MeloTTS (Chinese), both run via sherpa-onnx.
+"""
 import os, glob
 from math import gcd
 import numpy as np
@@ -7,7 +9,7 @@ from scipy.signal import resample_poly
 
 MODELS = os.environ.get("MODELS_DIR", os.path.join(os.path.dirname(__file__), "..", "models"))
 SR = 24000
-EN_SPEAKER = int(os.environ.get("EN_SPEAKER", 3))   # 3 = af_heart in kokoro-multi-lang-v1_0
+EN_SPEAKER = int(os.environ.get("EN_SPEAKER", 3))   # 3 = af_heart（kokoro-multi-lang-v1_0 中的编号 / speaker ID in kokoro-multi-lang-v1_0）
 _cache = {}
 
 def _kokoro():
@@ -53,7 +55,10 @@ def chinese(text, speed=1.0):
     a = _melo().generate(text, sid=0, speed=speed)
     return normalize(_to24k(np.array(a.samples, np.float32), a.sample_rate))
 
-# ---- lead-in trick -------------------------------------------------------
+# ---- 引导语技巧 / lead-in trick -------------------------------------------
+# MeloTTS 单独读很短的内容（比如两个字的词）时经常含糊。
+# 做法：先合成「意思是<中文意思>」，用语音识别模型的时间戳找到「意思是」
+# 结束的位置，再把它剪掉。需要安装可选的语音识别模型。
 # MeloTTS garbles very short inputs (e.g. a two-character word read alone).
 # We synthesize "意思是<meaning>", locate where "意思是" ends using the ASR
 # model's token timestamps, and cut it off. Requires the optional ASR model.
@@ -73,7 +78,9 @@ LEAD_IN = "意思是"
 _SHI_LIKE = set("是事时式私此四士世诗市示十")
 
 def chinese_meaning(text):
-    """Read a short Chinese meaning clearly. Returns (audio, used_lead_in_trick)."""
+    """清晰地读出一个中文意思。返回（音频，是否用了引导语技巧）。
+    Read a Chinese meaning clearly. Returns (audio, used_lead_in_trick).
+    """
     rec = _recognizer()
     if rec is None:
         return chinese(text), False
@@ -85,5 +92,5 @@ def chinese_meaning(text):
         return chinese(text), False
     start = int((ts[idx + 1] + 0.01) * SR)
     y = x[start:].copy()
-    n = min(360, len(y)); y[:n] *= np.linspace(0, 1, n)   # short fade-in
+    n = min(360, len(y)); y[:n] *= np.linspace(0, 1, n)   # 短淡入 / short fade-in
     return y, True

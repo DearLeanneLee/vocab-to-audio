@@ -1,13 +1,17 @@
-"""Optional: pull a 3-column word table (word | synonyms | Chinese meaning) out of a PDF
+"""可选：从中文无法复制的 PDF（扫描件或编码异常的 PDF 很常见）中提取三列单词表
+（单词 | 等价词 | 中文意思）。
+Optional: pull a 3-column word table (word | synonyms | Chinese meaning) out of a PDF
 whose Chinese text can't be copied (common with scanned or oddly-encoded PDFs).
 
+做法：把每页渲染成图片，用 Tesseract 分别识别每一列（eng + chi_sim），再按纵向位置
+把文字对齐成行。列的横向范围用页面宽度的比例表示，需要按你的 PDF 调整。
+OCR 一定会有错字（尤其是中文），生成音频前务必逐行校对输出的 CSV。
 It renders each page, OCRs each column with Tesseract (eng + chi_sim), and groups text
-into rows by vertical position. Column x-ranges are given as fractions of page width;
-adjust them for your PDF. ALWAYS proofread the CSV it writes — OCR makes mistakes,
-especially in Chinese.
+into rows by vertical position. Column x-ranges are fractions of the page width; adjust
+them for your PDF. ALWAYS proofread the CSV it writes: OCR makes mistakes, especially in Chinese.
 
-Usage: python scripts/extract_pdf_table.py book.pdf words.csv --cols 0.153,0.329 0.335,0.66 0.665,0.853
-Needs: poppler-utils (pdftoppm), tesseract with chi_sim.
+用法 / Usage: python scripts/extract_pdf_table.py book.pdf words.csv --cols 0.153,0.329 0.335,0.66 0.665,0.853
+依赖 / Needs: poppler-utils (pdftoppm), tesseract with chi_sim.
 """
 import argparse, csv, io, os, re, subprocess, tempfile
 from PIL import Image
@@ -27,7 +31,7 @@ def ocr_lines(img, lang):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("pdf"); ap.add_argument("out_csv")
-    ap.add_argument("--cols", nargs=3, required=True, help="x0,x1 fractions for word, synonyms, meaning")
+    ap.add_argument("--cols", nargs=3, required=True, help="三列的横向范围（页宽比例）/ x0,x1 fractions for word, synonyms, meaning")
     ap.add_argument("--dpi", type=int, default=200)
     a = ap.parse_args()
     cols = [tuple(map(float, c.split(","))) for c in a.cols]
@@ -45,14 +49,14 @@ def main():
                 ny = words[k + 1][0] if k + 1 < len(words) else H
                 pick = lambda L, sep: sep.join(t for yy, t in L if y - 15 <= yy < ny - 15)
                 m = pick(mean, "").replace(" ", "")
-                if not m or "解释" in m:      # skip table header rows
+                if not m or "解释" in m:      # 跳过表头行 / skip table header rows
                     continue
                 rows.append([w.strip(), pick(syns, " "), m])
     with open(a.out_csv, "w", newline="", encoding="utf-8-sig") as f:
         wr = csv.writer(f); wr.writerow(["n", "group", "word", "synonyms", "meaning"])
         for i, r in enumerate(rows, 1):
             wr.writerow([i, ""] + r)
-    print(f"Wrote {len(rows)} rows to {a.out_csv}. Proofread before generating audio!")
+    print(f"已写入 {len(rows)} 行到 {a.out_csv}，生成音频前请校对！/ Wrote {len(rows)} rows to {a.out_csv}. Proofread before generating audio!")
 
 if __name__ == "__main__":
     main()

@@ -1,8 +1,10 @@
-"""Spot-check generated audio by transcribing each spoken segment (needs the optional
-SenseVoice model). Rare English words are often misspelled by the recognizer: use this
-to catch missing or garbled segments, not to judge pronunciation.
+"""抽查生成的音频：把每一段语音转写成文字（需要可选的 SenseVoice 模型）。
+语音识别经常拼错生僻英文单词，所以它适合发现漏读、乱读，不能用来判断发音是否准确。
+Spot-check generated audio by transcribing each spoken segment (needs the optional
+SenseVoice model). The recognizer often misspells rare English words: use this to
+catch missing or garbled segments, not to judge pronunciation.
 
-Usage: python scripts/verify_asr.py out/wav/0001.wav out/wav/0002.wav ...
+用法 / Usage: python scripts/verify_asr.py out/wav/0001.wav out/wav/0002.wav ...
 """
 import os, sys, glob
 import numpy as np, soundfile as sf, sherpa_onnx

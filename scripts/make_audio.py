@@ -1,9 +1,12 @@
-"""Generate one WAV per word from a CSV.
+"""根据 CSV 为每个单词生成一个 WAV 文件。
+Generate one WAV file per word from a CSV.
 
-CSV columns (header required): n, group, word, synonyms, meaning
-Each entry is read as:  "<n>. <word>."  ->  <Chinese meaning>  ->  "Synonyms: <synonyms>."
+CSV 列（需要表头）/ CSV columns (header required): n, group, word, synonyms, meaning
+每个单词的朗读顺序 / Each entry is read as:
+    "<编号 n>. <单词 word>."  ->  <中文意思 meaning>  ->  "Synonyms: <等价词 synonyms>."
 
-Usage: python scripts/make_audio.py words.csv out/wav [first] [last]
+用法 / Usage: python scripts/make_audio.py words.csv out/wav [first] [last]
+重新运行会跳过已生成的单词，可以中断后继续。
 Re-running skips entries that already exist, so it can be resumed.
 """
 import csv, os, sys
@@ -36,7 +39,7 @@ def main(csv_path, out_dir, first=1, last=10**9):
         os.replace(dst + ".tmp.wav", dst)
         print(n, r["word"], flush=True)
     if fallback:
-        print("Lead-in trick not applied (meaning read directly):", fallback)
+        print("以下单词未使用引导语技巧（直接读中文意思）/ Lead-in trick not applied (meaning read directly):", fallback)
 
 if __name__ == "__main__":
     a = sys.argv

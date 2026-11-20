@@ -1,7 +1,8 @@
-"""Convert WAVs to MP3s: one per word (zipped, one folder per group), one combined MP3 per group,
+"""把 WAV 打包成：每个单词一个 MP3（压缩包，按组分文件夹）、每组一个合集 MP3、一份编号词表（xlsx）。需要 ffmpeg。
+Package WAVs into: one MP3 per word (zipped, one folder per group), one combined MP3 per group,
 and a numbered word list (xlsx). Requires ffmpeg.
 
-Usage: python scripts/package.py words.csv out/wav out/release
+用法 / Usage: python scripts/package.py words.csv out/wav out/release
 """
 import csv, os, re, subprocess, sys, zipfile
 import numpy as np, soundfile as sf
@@ -34,7 +35,7 @@ def main(csv_path, wav_dir, out):
     wb = Workbook(); ws = wb.active; ws.append(["n", "group", "word", "synonyms", "meaning", "audio file"])
     for r in rows: ws.append([int(r["n"]), r.get("group"), r["word"], r.get("synonyms"), r["meaning"], r["file"]])
     wb.save(f"{out}/word_list.xlsx")
-    print("Done:", out)
+    print("完成 / Done:", out)
 
 if __name__ == "__main__":
     main(*sys.argv[1:4])
