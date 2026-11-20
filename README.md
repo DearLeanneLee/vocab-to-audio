@@ -1,8 +1,14 @@
-# vocab-to-audio
+# vocab-to-audio · wordlist-to-mp3
 
-把英语单词表（单词 + 等价词 + 中文意思）批量转成 MP3 音频，用来边听边背单词（GRE、托福、雅思都适用）。全部在本地 CPU 上运行，不需要显卡，也不需要任何付费 API。
+**单词表一键转 MP3，用耳朵背单词 / Turn any word list into MP3 and learn vocabulary by ear**
 
-Turn an English vocabulary list (word + synonyms + Chinese meaning) into MP3 audio, so you can learn vocabulary by listening (GRE, TOEFL, IELTS, etc.). Everything runs locally on a CPU: no GPU and no paid API needed.
+有些人看十遍记不住的单词，听三遍就记住了。如果你也是"耳朵比眼睛好使"的人，这个工具就是为你做的：把单词表（单词 + 等价词 + 中文意思）批量转成音频，通勤、散步、做饭、睡前都能听，把零碎时间变成背单词的时间。GRE、托福、雅思都适用。
+
+Some people can stare at a word ten times and forget it, yet remember it after hearing it three times. If you learn better by listening than by reading, this tool is for you: it turns a vocabulary list (word + synonyms + Chinese meaning) into audio you can play on your commute, on a walk, while cooking or before bed, so spare minutes become study time. Works for GRE, TOEFL, IELTS and more.
+
+- 🎧 **边听边背 / Learn hands-free**：英文单词 → 中文意思 → 同义词，一个词约 5 秒。 / English word → Chinese meaning → synonyms, about 5 seconds per word.
+- 📦 **随用随取 / Your choice of format**：每个单词一个 MP3，或者每天一个合集从头听到尾。 / One MP3 per word, or one combined track per day.
+- 💻 **完全离线、免费 / Free and offline**：本地 CPU 运行，不需要显卡，不需要付费 API。 / Runs on your own CPU, no GPU or paid API needed.
 
 ---
 
